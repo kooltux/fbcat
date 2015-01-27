@@ -2,6 +2,7 @@
 #include <Elementary.h>
 
 #include <stdio.h>
+#include <stdlib.h>
 
 
  // window close callback
@@ -13,28 +14,32 @@ static void on_win_del (void *data, Evas_Object *obj, void *event_info)
 static Eina_Bool on_stdin_change (void *data, Ecore_Fd_Handler *handler)
 {
 	Evas_Object *label = (Evas_Object *)data;
-	char buffer[64];
+	char buffer[1024];
 	size_t nbytes;
 	int fd;
 
-#if 0
+	fprintf(stderr,"stdin callback called\n");
 	if (ecore_main_fd_handler_active_get (handler, ECORE_FD_ERROR)) {
+		fprintf(stderr,"An error has occured. Quitting.\n");
 		elm_object_text_set (label, "");
 		elm_exit ();
+		return ECORE_CALLBACK_CANCEL;
 	}
-#endif
 
 	fd = ecore_main_fd_handler_fd_get (handler);
 	nbytes = read (fd, buffer, sizeof(buffer));
-#if 0
+	fprintf(stderr,"read %d bytes on stdin\n");
 	if (nbytes == 0) {
+		fprintf(stderr,"End of file. Quitting.\n");
 		elm_object_text_set (label, "");
 		elm_exit ();
+		return ECORE_CALLBACK_CANCEL;
 	}
-#endif
+
+	buffer[nbytes]='\0';
 	elm_object_text_set (label, buffer);
 
-	return EINA_TRUE;
+	return ECORE_CALLBACK_RENEW;
 }
 
 int elm_main (int argc, char **argv)

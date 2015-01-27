@@ -1,7 +1,9 @@
-all: fbcat
+OUT=fbcat.real
 
-fbcat: fbcat.c
-	gcc -o $@ $< `pkg-config --libs --cflags ecore`
+all: $(OUT)
+
+$(OUT): fbcat.c
+	gcc -o $@ $< $(CFLAGS) `pkg-config --libs --cflags elementary` $(LDFLAGS)
 
 clean:
-	rm -f fbcat
+	rm -f $(OUT)
