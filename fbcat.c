@@ -18,7 +18,6 @@ static Eina_Bool on_stdin_change (void *data, Ecore_Fd_Handler *handler)
 	size_t nbytes;
 	int fd;
 
-	fprintf(stderr,"stdin callback called\n");
 	if (ecore_main_fd_handler_active_get (handler, ECORE_FD_ERROR)) {
 		fprintf(stderr,"An error has occured. Quitting.\n");
 		elm_object_text_set (label, "");
@@ -28,9 +27,7 @@ static Eina_Bool on_stdin_change (void *data, Ecore_Fd_Handler *handler)
 
 	fd = ecore_main_fd_handler_fd_get (handler);
 	nbytes = read (fd, buffer, sizeof(buffer));
-	fprintf(stderr,"read %d bytes on stdin\n");
 	if (nbytes == 0) {
-		fprintf(stderr,"End of file. Quitting.\n");
 		elm_object_text_set (label, "");
 		elm_exit ();
 		return ECORE_CALLBACK_CANCEL;
