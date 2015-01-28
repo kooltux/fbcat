@@ -53,24 +53,29 @@ int elm_main (int argc, char **argv)
 
 	evas_object_size_hint_min_set (bg, 848, 480);
 	evas_object_size_hint_max_set (bg, 848, 480);
-	elm_bg_color_set (bg, 255, 255, 255);
+	elm_bg_color_set (bg,0,0,0);
 
 	elm_win_resize_object_add (window, bg);
 	elm_win_resize_object_add (window, box);
 	elm_box_pack_end (box, label);
 
+	//elm_object_text_set (label, "<font=Sans color=blue font_size=72>Default</font> text");
+	//elm_label_line_wrap_set(label, ELM_WRAP_CHAR);
+	//evas_object_text_font_source_set(label,"Sans");
+	//evas_object_color_set(label, 255, 0, 0, 255);
+	evas_object_text_font_set(label,"Sans",72);
+
 	evas_object_smart_callback_add (window, "delete,request", on_win_del, NULL);
+
+	handler = ecore_main_fd_handler_add (STDIN_FILENO,
+	                                     ECORE_FD_READ | ECORE_FD_ERROR,
+	                                     on_stdin_change,
+	                                     label, NULL, NULL);
 
 	evas_object_show (bg);
 	evas_object_show (label);
 	evas_object_show (box);
 	evas_object_show (window);
-
-	elm_object_text_set (label, "<font=Sans color=blue font_size=24>Default</font> text");
-	handler = ecore_main_fd_handler_add (STDIN_FILENO,
-	                                     ECORE_FD_READ | ECORE_FD_ERROR,
-	                                     on_stdin_change,
-	                                     label, NULL, NULL);
 
 	elm_run ();
 
