@@ -11,6 +11,8 @@ static void on_win_del (void *data, Evas_Object *obj, void *event_info)
 	elm_exit ();
 }
 
+Evas_Object *window, *bg, *box, *label;
+
 static Eina_Bool on_stdin_change (void *data, Ecore_Fd_Handler *handler)
 {
 	Evas_Object *label = (Evas_Object *)data;
@@ -33,15 +35,20 @@ static Eina_Bool on_stdin_change (void *data, Ecore_Fd_Handler *handler)
 		return ECORE_CALLBACK_CANCEL;
 	}
 
-	buffer[nbytes]='\0';
-	elm_object_text_set (label, buffer);
+	if (nbytes>0) {
+		buffer[nbytes-1]='\0';
+		//fprintf(stderr,"Buffer:[%d] %s",strlen(buffer),buffer);
+		//elm_bg_color_set (bg,buffer[0],buffer[1],buffer[2]);
+		elm_object_text_set (label, buffer);
+
+		evas_object_show(label);
+	}
 
 	return ECORE_CALLBACK_RENEW;
 }
 
 int elm_main (int argc, char **argv)
 {
-	Evas_Object *window, *bg, *box, *label;
 	Ecore_Fd_Handler *handler;
 
 	window = elm_win_add (NULL, "main", ELM_WIN_BASIC);
@@ -53,7 +60,7 @@ int elm_main (int argc, char **argv)
 
 	evas_object_size_hint_min_set (bg, 848, 480);
 	evas_object_size_hint_max_set (bg, 848, 480);
-	elm_bg_color_set (bg,0,0,0);
+	elm_bg_color_set (bg,0, 0, 0);
 
 	elm_win_resize_object_add (window, bg);
 	elm_win_resize_object_add (window, box);
@@ -63,7 +70,12 @@ int elm_main (int argc, char **argv)
 	//elm_label_line_wrap_set(label, ELM_WRAP_CHAR);
 	//evas_object_text_font_source_set(label,"Sans");
 	//evas_object_color_set(label, 255, 0, 0, 255);
-	evas_object_text_font_set(label,"Sans",72);
+	//evas_object_text_font_set(label,"Sans",72);
+
+	evas_object_show (bg);
+	evas_object_show (label);
+	evas_object_show (box);
+	evas_object_show (window);
 
 	evas_object_smart_callback_add (window, "delete,request", on_win_del, NULL);
 
@@ -71,11 +83,6 @@ int elm_main (int argc, char **argv)
 	                                     ECORE_FD_READ | ECORE_FD_ERROR,
 	                                     on_stdin_change,
 	                                     label, NULL, NULL);
-
-	evas_object_show (bg);
-	evas_object_show (label);
-	evas_object_show (box);
-	evas_object_show (window);
 
 	elm_run ();
 
